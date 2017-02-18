@@ -15,7 +15,7 @@ trait FbEvents extends FbJsonMarshalling {
   def getEvents(token: String, pageId: String): List[FbEvent] = {
     val url = s"https://graph.facebook.com/v2.7/$pageId/events?access_token=$token";
     Http(url).asString match {
-      case HttpResponse(body, 200, _) => 
+      case HttpResponse(body, 200, _) =>
         body.parseJson.convertTo[Response].data
     };
   }
