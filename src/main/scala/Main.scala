@@ -13,12 +13,11 @@ trait Main extends FbEvents {
   implicit def liftOption[T](value: T): Option[T] = Some(value)
 
   def convert(event: FbEvents.FbEvent): Event = {
-    val description: String = event.description.getOrElse("");
     Event(
       uid = Uid(event.id),
       dtstart = event.startTime,
       summary = Summary(event.name),
-      description = Description(description),
+      description = event.description.map(Description(_)),
       url = Url(s"https://www.facebook.com/events/${event.id}/")
     )
   }
