@@ -17,11 +17,11 @@ trait FbEvents extends FbJsonMarshalling {
     Http(url).asString match {
       case HttpResponse(body, 200, _) =>
         val response : Response = body.parseJson.convertTo[Response];
-        val currentResults : List[FbEvent] = response.data;
-        response.paging flatMap { _.next } match {
-           case None => currentResults
-           case Some(newUrl) => currentResults ::: getEvents(newUrl)
-        }
+
+        response.data ++ (response.paging.flatMap(_.next) match {
+           case None => Nil
+           case Some(newUrl) => getEvents(newUrl)
+        })
     };
   }
 }
