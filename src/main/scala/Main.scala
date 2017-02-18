@@ -29,6 +29,23 @@ trait Main extends FbEvents {
   }
 }
 
+class MainLambda extends Main with SnakifiedSprayJsonSupport {
+  import java.io.{ InputStream, OutputStream }
+  import scala.io.Source
+  import spray.json._
+
+  case class Params(token: String, pageId: String)
+  implicit val paramsReader = jsonFormat2(Params)
+
+  case class Request(params: Params)
+  implicit val requestReader = jsonFormat1(Request)
+
+  def handleRequest(inputStream: InputStream, outputStream: OutputStream): Unit = {
+      val params = Source.fromInputStream(inputStream).mkString.parseJson.convertTo[Request].params
+      outputStream.write(getICalendar(params.token, params.pageId).getBytes("UTF-8"))
+  }
+}
+
 object MainApp extends App with Main {
   args.toList match {
     case token :: pageId :: Nil =>
