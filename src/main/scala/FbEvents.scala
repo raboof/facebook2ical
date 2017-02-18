@@ -5,7 +5,7 @@ import spray.json._
 import scalaj.http._
 
 object FbEvents {
-  case class FbEvent(id: String, name: String, description: String, startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
+  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
   case class Response(data: List[FbEvent]);
 }
 

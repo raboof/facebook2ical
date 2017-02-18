@@ -12,13 +12,16 @@ import icalendar.ical.Writer._
 trait Main extends FbEvents {
   implicit def liftOption[T](value: T): Option[T] = Some(value)
 
-  def convert(event: FbEvents.FbEvent): Event = Event(
-    uid = Uid(event.id),
-    dtstart = event.startTime,
-    summary = Summary(event.name),
-    description = Description(event.description),
-    url = Url(s"https://www.facebook.com/events/${event.id}/")
-  )
+  def convert(event: FbEvents.FbEvent): Event = {
+    val description: String = event.description.getOrElse("");
+    Event(
+      uid = Uid(event.id),
+      dtstart = event.startTime,
+      summary = Summary(event.name),
+      description = Description(description),
+      url = Url(s"https://www.facebook.com/events/${event.id}/")
+    )
+  }
 
   def getICalendar(token: String, pageId: String): String = {
     asIcal(Calendar(
