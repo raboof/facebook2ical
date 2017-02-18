@@ -18,8 +18,7 @@ trait FbEvents extends FbJsonMarshalling {
       case HttpResponse(body, 200, _) =>
         val response : Response = body.parseJson.convertTo[Response];
         val currentResults : List[FbEvent] = response.data;
-        val paging : Option[Paging] = response.paging
-        paging flatMap { _.next } match {
+        response.paging flatMap { _.next } match {
            case None => currentResults
            case Some(newUrl) => currentResults ::: getEvents(newUrl)
         }
