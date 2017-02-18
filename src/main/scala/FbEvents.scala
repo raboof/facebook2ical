@@ -5,7 +5,7 @@ import spray.json._
 import scalaj.http._
 
 object FbEvents {
-  case class FbEvent(id: String, name: String, description: String, startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
+  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
   case class Cursors(before: String, after: String);
   case class Paging(cursors: Cursors);
   case class Response(data: List[FbEvent], paging: Option[Paging]);
@@ -36,7 +36,7 @@ trait FbJsonMarshalling extends SnakifiedSprayJsonSupport {
   import FbEvents._
   import DefaultJsonProtocol._
 
-  implicit val dateTimeFormat = lift(new JsonReader[ZonedDateTime] {
+  implicit val dateTi meFormat = lift(new JsonReader[ZonedDateTime] {
     override def read(json: JsValue) = json match {
       case JsString(value) => ZonedDateTime.parse(value.replaceAll("00$", ":00"), DateTimeFormatter.ISO_OFFSET_DATE_TIME)
       case _ => deserializationError("Not a string: $json")
