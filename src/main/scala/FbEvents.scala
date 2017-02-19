@@ -5,18 +5,23 @@ import spray.json._
 import scalaj.http._
 
 object FbEvents {
-  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
-  case class Response(data: List[FbEvent]);
+  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime])
+  case class Paging(next: Option[String])
+  case class Response(data: List[FbEvent], paging: Option[Paging])
 }
 
 trait FbEvents extends FbJsonMarshalling {
   import FbEvents._
 
-  def getEvents(token: String, pageId: String): List[FbEvent] = {
-    val url = s"https://graph.facebook.com/v2.7/$pageId/events?access_token=$token";
+  def getEvents(url: String): List[FbEvent] = {
     Http(url).asString match {
       case HttpResponse(body, 200, _) =>
-        body.parseJson.convertTo[Response].data
+        val response : Response = body.parseJson.convertTo[Response]
+
+        response.data ++ (response.paging.flatMap(_.next) match {
+           case None => Nil
+           case Some(newUrl) => getEvents(newUrl)
+        })
     };
   }
 }
@@ -32,5 +37,6 @@ trait FbJsonMarshalling extends SnakifiedSprayJsonSupport {
     }
   })
   implicit val eventFormat = jsonFormat5(FbEvent)
-  implicit val responseFormat: JsonReader[Response] = jsonFormat1(Response)
+  implicit val pagingFormat = jsonFormat1(FbEvents.Paging)
+  implicit val responseFormat: JsonReader[Response] = jsonFormat2(Response)
 }
