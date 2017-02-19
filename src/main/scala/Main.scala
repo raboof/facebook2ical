@@ -26,7 +26,8 @@ trait Main extends FbEvents {
     val url = s"https://graph.facebook.com/v2.7/$pageId/events?access_token=$token"
     asIcal(Calendar(
       prodid = Prodid("-//raboof/facebook2ical//NONSGML v1.0//NL"),
-      events = getEvents(url).map(convert(_))))
+      events = getEvents(url).map(convert(_))
+    ))
   }
 }
 
@@ -42,8 +43,8 @@ class MainLambda extends Main with SnakifiedSprayJsonSupport {
   implicit val requestReader = jsonFormat1(Request)
 
   def handleRequest(inputStream: InputStream, outputStream: OutputStream): Unit = {
-      val params = Source.fromInputStream(inputStream).mkString.parseJson.convertTo[Request].params
-      outputStream.write(getICalendar(params.token, params.pageId).getBytes("UTF-8"))
+    val params = Source.fromInputStream(inputStream).mkString.parseJson.convertTo[Request].params
+    outputStream.write(getICalendar(params.token, params.pageId).getBytes("UTF-8"))
   }
 }
 
