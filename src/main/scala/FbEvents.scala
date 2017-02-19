@@ -5,9 +5,9 @@ import spray.json._
 import scalaj.http._
 
 object FbEvents {
-  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime]);
-  case class Paging(next: Option[String]);
-  case class Response(data: List[FbEvent], paging: Option[Paging]);
+  case class FbEvent(id: String, name: String, description: Option[String], startTime: ZonedDateTime, endTime: Option[ZonedDateTime])
+  case class Paging(next: Option[String])
+  case class Response(data: List[FbEvent], paging: Option[Paging])
 }
 
 trait FbEvents extends FbJsonMarshalling {
@@ -36,7 +36,7 @@ trait FbJsonMarshalling extends SnakifiedSprayJsonSupport {
       case _ => deserializationError("Not a string: $json")
     }
   })
-  implicit val eventFormat = jsonFormat5(FbEvent);
-  implicit val pagingFormat = jsonFormat1(FbEvents.Paging);
-  implicit val responseFormat: JsonReader[Response] = jsonFormat2(Response); 
+  implicit val eventFormat = jsonFormat5(FbEvent)
+  implicit val pagingFormat = jsonFormat1(FbEvents.Paging)
+  implicit val responseFormat: JsonReader[Response] = jsonFormat2(Response)
 }
