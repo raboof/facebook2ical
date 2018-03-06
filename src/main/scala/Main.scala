@@ -18,16 +18,14 @@ trait Main extends FbEvents {
       dtstart = event.startTime,
       summary = Summary(event.name),
       description = event.description.map(Description(_)),
-      url = Url(s"https://www.facebook.com/events/${event.id}/")
-    )
+      url = Url(s"https://www.facebook.com/events/${event.id}/"))
   }
 
   def getICalendar(token: String, pageId: String): String = {
     val url = s"https://graph.facebook.com/v2.7/$pageId/events?access_token=$token"
     asIcal(Calendar(
       prodid = Prodid("-//raboof/facebook2ical//NONSGML v1.0//NL"),
-      events = getEvents(url).map(convert(_))
-    ))
+      events = getEvents(url).map(convert(_))))
   }
 }
 
